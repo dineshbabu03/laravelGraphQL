@@ -14,3 +14,25 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('book', function () {
+    $client = \Softonic\GraphQL\ClientBuilder::build('http://127.0.0.1:8000/graphql');
+
+    $books = '
+        query {
+            books {
+                id
+                title
+                author
+            }
+        }
+    ';
+
+    $variables = [
+        'idFoo' => 'foo',
+        'idBar' => 'bar',
+    ];
+    $response = $client->query($books, $variables);
+
+    dd($response);
+});

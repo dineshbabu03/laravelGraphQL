@@ -5,9 +5,64 @@ scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
 type Query {
+    #User end-points
     users: [User!]! @paginate(defaultCount: 10)
     user(id: ID @eq): User @find
+
+    #Book end-points
+    books: [Book] @all
+    book(id: ID @eq): Book @find
+    bookfeatured(featured: Boolean @eq): [Book] @all
+    bookSearchQuery(search: String! @eq): [Book]
+
+    #Category end-points
+    categories: [Category] @all
+    category(id: ID @eq): Category @find
 }
+
+type Mutation {
+    #CRUD operation for Category model
+    createCategory(
+        name: String @rules(apply: ["required", "unique:categories,name"])
+    ): Category @create
+
+    updateCategory(
+        id: ID @rules(apply: ["required"])
+        name: String @rules(apply: ["required", "unique:categories,name"])
+    ): Category @update
+
+    deleteCategory(
+        id: ID! @rules(apply: ["required"])
+    ): Category @delete
+
+
+    #CRUD operation for Book model
+    createBook(
+        category_id: Int!
+        title: String! @rules(apply: ["required"])
+        author: String! @rules(apply: ["required"])
+        image: String
+        description: String
+        link: String
+        featured: Boolean
+    ): Book @create
+
+    UpdateBook(
+        id: ID! @rules(apply: ["required"])
+        category_id: Int!
+        title: String! @rules(apply: ["required"])
+        author: String! @rules(apply: ["required"])
+        image: String
+        description: String
+        link: String
+        featured: Boolean
+    ): Book @update
+
+    deleteBook(
+        id: ID! @rules(apply: ["required"])
+    ): Book @delete
+}
+
 
 type User {
     id: ID!
@@ -31,5 +86,5 @@ type Book {
 type Category {
     id: ID!
     name: String!
-    book: [Book] @hasMany
+    books: [Book] @hasMany
 }
